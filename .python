@@ -1,75 +1,104 @@
-import math
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic Tac Toe</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .game {
+      background: #ffffff;
+      padding: 20px 30px 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    .status {
+      margin: 10px 0 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    .cell {
+      background: #e9ecef;
+      border-radius: 8px;
+      font-size: 40px;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .cell:hover {
+      background: #dee2e6;
+    }
+    .cell.disabled {
+      cursor: not-allowed;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      background: #007bff;
+      color: #ffffff;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="game">
+    <h1>Tic Tac Toe</h1>
+    <div class="status" id="status">Player X's turn</div>
+    <div class="board" id="board">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+    <button onclick="resetGame()">Restart Game</button>
+  </div>  <script>
+    const cells = document.querySelectorAll('.cell');
+    const statusText = document.getElementById('status');
 
-board = [' ' for _ in range(9)]
+    let board = ['', '', '', '', '', '', '', '', ''];
+    let currentPlayer = 'X';
+    let isGameActive = true;
 
-def print_board():
-    for i in range(0, 9, 3):
-        print(board[i:i+3])
+    const winningCombinations = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
 
-def check_winner(b, p):
-    return ((b[0]==b[1]==b[2]==p) or
-            (b[3]==b[4]==b[5]==p) or
-            (b[6]==b[7]==b[8]==p) or
-            (b[0]==b[3]==b[6]==p) or
-            (b[1]==b[4]==b[7]==p) or
-            (b[2]==b[5]==b[8]==p) or
-            (b[0]==b[4]==b[8]==p) or
-            (b[2]==b[4]==b[6]==p))
-
-def minimax(b, depth, is_max):
-    if check_winner(b, 'O'):
-        return 1
-    if check_winner(b, 'X'):
-        return -1
-    if ' ' not in b:
-        return 0
-
-    if is_max:
-        best = -math.inf
-        for i in range(9):
-            if b[i] == ' ':
-                b[i] = 'O'
-                best = max(best, minimax(b, depth+1, False))
-                b[i] = ' '
-        return best
-    else:
-        best = math.inf
-        for i in range(9):
-            if b[i] == ' ':
-                b[i] = 'X'
-                best = min(best, minimax(b, depth+1, True))
-                b[i] = ' '
-        return best
-
-def ai_move():
-    best_score = -math.inf
-    move = 0
-    for i in range(9):
-        if board[i] == ' ':
-            board[i] = 'O'
-            score = minimax(board, 0, False)
-            board[i] = ' '
-            if score > best_score:
-                best_score = score
-                move = i
-    board[move] = 'O'
-
-while True:
-    print_board()
-    player = int(input("Enter position (0-8): "))
-    board[player] = 'X'
-
-    if check_winner(board, 'X'):
-        print("You win!")
-        break
-
-    ai_move()
-
-    if check_winner(board, 'O'):
-        print_board()
-        print("AI wins!")
-        break
-
-    if ' ' not in board:
-        print("Draw!")
-        break
+    function handleCellClick(e)
